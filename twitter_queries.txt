@@ -1,0 +1,24 @@
+Advanced Search for Disney Plus:
+Disney Plus (bom OR ruim OR amo OR odeio OR muito OR pouco OR maratona OR maratonando OR assistir OR assistindo OR vsf OR lol OR foda OR merda OR tnc OR site OR aplicativo OR player OR lixo OR pqp OR app OR curtindo OR curti OR otimo OR maravilhoso OR maravilhosa OR horrivel OR bosta OR coco OR melhor OR pior) lang:pt since:2023-08-01 -filter:links -filter:replies
+
+Advanced Search for Netflix:
+Netflix (bom OR ruim OR amo OR odeio OR muito OR pouco OR maratona OR maratonando OR assistir OR assistindo OR vsf OR lol OR foda OR merda OR tnc OR site OR aplicativo OR player OR lixo OR pqp OR app OR curtindo OR curti OR otimo OR maravilhoso OR maravilhosa OR horrivel OR bosta OR coco OR melhor OR pior) lang:pt since:2023-08-01 -filter:links -filter:replies
+
+Advanced Search for HBO Max:
+HBO Max (bom OR ruim OR amo OR odeio OR muito OR pouco OR maratona OR maratonando OR assistir OR assistindo OR vsf OR lol OR foda OR merda OR tnc OR site OR aplicativo OR player OR lixo OR pqp OR app OR curtindo OR curti OR otimo OR maravilhoso OR maravilhosa OR horrivel OR bosta OR coco OR melhor OR pior) lang:pt since:2023-08-01 -filter:links -filter:replies
+
+Advanced Search for Amazon Prime:
+Amazon Prime (bom OR ruim OR amo OR odeio OR muito OR pouco OR maratona OR maratonando OR assistir OR assistindo OR vsf OR lol OR foda OR merda OR tnc OR site OR aplicativo OR player OR lixo OR pqp OR app OR curtindo OR curti OR otimo OR maravilhoso OR maravilhosa OR horrivel OR bosta OR coco OR melhor OR pior) lang:pt since:2023-08-01 -filter:links -filter:replies
+
+Advanced Search for Prime Video:
+Prime Video (bom OR ruim OR amo OR odeio OR muito OR pouco OR maratona OR maratonando OR assistir OR assistindo OR vsf OR lol OR foda OR merda OR tnc OR site OR aplicativo OR player OR lixo OR pqp OR app OR curtindo OR curti OR otimo OR maravilhoso OR maravilhosa OR horrivel OR bosta OR coco OR melhor OR pior) lang:pt since:2023-08-01 -filter:links -filter:replies
+
+Advanced Search for Apple TV:
+Apple TV (bom OR ruim OR amo OR odeio OR muito OR pouco OR maratona OR maratonando OR assistir OR assistindo OR vsf OR lol OR foda OR merda OR tnc OR site OR aplicativo OR player OR lixo OR pqp OR app OR curtindo OR curti OR otimo OR maravilhoso OR maravilhosa OR horrivel OR bosta OR coco OR melhor OR pior) lang:pt since:2023-08-01 -filter:links -filter:replies
+
+Advanced Search for Paramount+:
+Paramount+ (bom OR ruim OR amo OR odeio OR muito OR pouco OR maratona OR maratonando OR assistir OR assistindo OR vsf OR lol OR foda OR merda OR tnc OR site OR aplicativo OR player OR lixo OR pqp OR app OR curtindo OR curti OR otimo OR maravilhoso OR maravilhosa OR horrivel OR bosta OR coco OR melhor OR pior) lang:pt since:2023-08-01 -filter:links -filter:replies
+
+Advanced Search for Globoplay:
+Globoplay (bom OR ruim OR amo OR odeio OR muito OR pouco OR maratona OR maratonando OR assistir OR assistindo OR vsf OR lol OR foda OR merda OR tnc OR site OR aplicativo OR player OR lixo OR pqp OR app OR curtindo OR curti OR otimo OR maravilhoso OR maravilhosa OR horrivel OR bosta OR coco OR melhor OR pior) lang:pt since:2023-08-01 -filter:links -filter:replies
+

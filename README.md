@@ -1,1 +1,1 @@
-# Stream-insights
+# Streaming-insights
