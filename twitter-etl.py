@@ -40,6 +40,7 @@ class TwitterCrawler:
         self.engagement = "min_faves:300 min_retweets:5"
 
         self.login = os.getenv('TWITTER_LOGIN')
+        self.username = os.getenv('TWITTER_USERNAME')
         self.password = os.getenv('TWITTER_PASS')
 
     # Create advanced search queries for each streaming platform
@@ -56,21 +57,74 @@ class TwitterCrawler:
             self.advanced_queries.append(search_query)
 
     def get_html_pages(self):
+        self.create_advanced_search()
         self.driver.get('https://twitter.com/explore')
-        WebDriverWait(self.driver, 30).until(
-            EC.presence_of_element_located((By.XPATH,'//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[5]/label/div/div[2]'))  # Replace with the appropriate locator
-        )
         self.login_twitter()
+        self.make_search(self.advanced_queries[0])
 
     def login_twitter(self):
-        login = self.driver.find_element(By.XPATH,'//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[5]/label/div/div[2]')
-        login.send_keys(self.login)
-        login.send_keys(Keys.RETURN)
-        password = self.driver.find_element(By.XPATH,'//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[3]/div/label/div/div[2]/div[1]/input')
-        # button = self.driver.find_element(By.XPATH,'//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[6]/div')
-        # button.click
-        password.send_keys(self.password)
-        password.send_keys(Keys.RETURN)
+        try:
+            self.insert_text(self.login, '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[5]/label/div/div[2]/div/input' )
+            self.insert_text(self.username, '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input', 5)
+            self.insert_text(self.password, '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[3]/div/label/div/div[2]/div[1]/input',40)
+        except Exception as e:
+            print("An unexpected error occurred:", e)
+
+    def insert_text(self, text, XPATH, timeout=10):
+        input_text = self.wait_for_element(XPATH)
+        if input_text:
+            input_text.send_keys(text)
+            input_text.send_keys(Keys.RETURN)
+
+    def wait_for_element(self, locator, by_type = By.XPATH, timeout=30):
+        element = WebDriverWait(self.driver, timeout).until( EC.presence_of_element_located((by_type,locator)))
+        return element
+
+    def make_search(self, adv_search):
+        try:
+            # Enter in the Explore Tab
+            self.wait_for_element('//*[@id="react-root"]/div/div/div[2]/header/div/div/div/div[1]/div[2]/nav/a[2]/div').click()
+            # Insert text in the search bar 
+            self.insert_text(adv_search, '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[1]/div[1]/div[1]/div/div/div/div/div[1]/div[2]/div/div/div/form/div[1]/div/div/div/label/div[2]/div/input',90)
+            # Enter in the Latest Tab
+            self.wait_for_element('//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[1]/div[1]/div[2]/nav/div/div[2]/div/div[2]/a').click()
+            # Scroll down to load more tweets
+            self.scroll_down()
+            # Shut down the driver
+            self.driver.quit()
+
+        except Exception as e:
+            print("An unexpected error occurred:", e)
+        
+    def scroll_down(self, target_tweets_count = 300, scroll_pause_time = 1.5):
+        self.wait_for_element('div[data-testid="cellInnerDiv"]', By.CSS_SELECTOR)
+        # Count the number of tweets on the page
+        tweets_count = len(self.driver.find_elements(By.CSS_SELECTOR, 'div[data-testid="cellInnerDiv"]'))
+
+        # Get scroll height
+        last_height = self.driver.execute_script("return document.body.scrollHeight")
+
+        while tweets_count < target_tweets_count:
+            # Scroll down to bottom
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            # Wait to load page
+            time.sleep(scroll_pause_time)
+
+            # Update the counter of tweets
+            tweets_count += len(self.driver.find_elements(By.CSS_SELECTOR, 'div[data-testid="cellInnerDiv"]'))
+            print(tweets_count)
+            # Calculate new scroll height and compare with last scroll height
+            new_height = self.driver.execute_script("return document.body.scrollHeight")
+            if new_height == last_height:
+                break
+            last_height = new_height
+        
+        html_source = self.driver.page_source
+
+        with open('twitter_html_source.txt', 'w', encoding='utf-8') as file:
+            file.write(html_source)
+
+
 
 # style="transform: translateY(39183px); position: absolute; width: 100%; transition: opacity 0.3s ease-out 0s;"
 # data-testid="tweet"
