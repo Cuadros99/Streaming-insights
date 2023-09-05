@@ -27,19 +27,24 @@ class TwitterCrawler:
         self.username = os.getenv('TWITTER_USERNAME')
         self.password = os.getenv('TWITTER_PASS')
 
+        # Import a list with the main streaming platforms
+        # with open('streaming_platforms.json', 'r') as json_file:
+        #     self.streaming_platforms = json.load(json_file)
+        self.streaming_platforms = ["Disney Plus"]
+
         # Keywords
         self.keywords = ["bom", "ruim", "chato", "legal", "amo", "odeio", "muito", "pouco", "maratona", "maratonando", "assistir", "assistindo", "vsf", "lol", "mds", "foda", "merda", "tnc", "site", "aplicativo", "player", "lixo", "pqp", "app", "curtindo", "curti", "otimo", "maravilhoso", "maravilhosa", "horrivel", "bosta", "coco", "melhor","pior", "adoro", "caro", "cara","barato"]
-        # Import a list with the main streaming platforms
-        with open('streaming_platforms.json', 'r') as json_file:
-            self.streaming_platforms = json.load(json_file)
         # Define the common filters
         self.common_filters = "-filter:links -filter:replies"
         # Define the period (since:2023-08-01)
         self.period = "since:2023-08-01"
         # Define the language (lang:pt)
         self.language = "lang:pt"
+        
         # Define the html list of pages
         self.html_source_dict = {}
+        for platform in self.streaming_platforms:
+            self.html_source_dict[platform] = []
 
     # Create advanced search queries for each streaming platform
     def create_advanced_search(self):
@@ -81,14 +86,12 @@ class TwitterCrawler:
             # Enter in the Latest Tab
             self.wait_for_element('//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[1]/div[1]/div[2]/nav/div/div[2]/div/div[2]/a').click()
             # Scroll down to load more tweets
-            self.scroll_down()
-            # Get the html page
-            self.get_html(platform)
+            self.scroll_down(platform)
     
         except Exception as e:
             print("An unexpected error occurred:", e)
         
-    def scroll_down(self, target_tweets_count = 300, scroll_pause_time = 1.5):
+    def scroll_down(self, platform, target_tweets_count = 400, scroll_pause_time = 1.5):
         # Waits until the first tweet appears
         self.wait_for_element('div[data-testid="cellInnerDiv"]', By.CSS_SELECTOR)
         # Count the number of tweets on the page
@@ -98,6 +101,8 @@ class TwitterCrawler:
 
         # Scroll down through the screen
         while tweets_count < target_tweets_count:
+            # Get the html page
+            self.get_html(platform)
             # Scroll down to bottom
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             # Wait to load page
@@ -114,12 +119,15 @@ class TwitterCrawler:
             last_height = new_height
     
     def get_html(self, platform):
-        platform_name = platform.replace(' ', '_')
-        file_path = os.path.join('twitter_html', f'twitter_html_{platform_name}.txt')
         html = self.driver.page_source
-        self.html_source_dict[platform] = html
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(html)
+        self.html_source_dict[platform].append(html)
+        
+    def export_html_pages(self):
+        for platform in self.streaming_platforms:
+            platform_name = platform.replace(' ', '_')
+            file_path = os.path.join('twitter_html', f'twitter_html_{platform_name}.json')
+            with open(file_path, 'w') as json_file:
+                json.dump(self.html_source_dict[platform], json_file)
 
     def main(self):
         # Create advanced searches
@@ -132,6 +140,8 @@ class TwitterCrawler:
         for platform, query in self.advanced_queries.items():
             self.make_search(platform, query)
             print(f"{platform} concluído com sucesso!")
+        # Export json files with html content
+        self.export_html_pages()
         # Shut down the driver
         self.driver.quit()
 
