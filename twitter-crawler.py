@@ -1,6 +1,7 @@
 import os
 import json
 from dotenv import load_dotenv
+from datetime import datetime
 import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -17,10 +18,9 @@ load_dotenv()
 class TwitterCrawler:
     def __init__(self):
 
-        # Initialize Selenium (you'll need to specify your web driver, e.g., ChromeDriver)
-        options = Options()
-        options.add_argument('--disable-dev-shm-usage')
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)  # Specify the path to your ChromeDriver executable
+        # Define Selenium paramaters
+        self.options = Options()
+        self.options.add_argument('--disable-dev-shm-usage')
         
         # Get the twitter account data for auth 
         self.login = os.getenv('TWITTER_LOGIN')
@@ -30,14 +30,14 @@ class TwitterCrawler:
         # Import a list with the main streaming platforms
         # with open('streaming_platforms.json', 'r') as json_file:
         #     self.streaming_platforms = json.load(json_file)
-        self.streaming_platforms = ["Disney Plus"]
+        self.streaming_platforms = ["Disney Plus", "Netflix"]
 
         # Keywords
         self.keywords = ["bom", "ruim", "chato", "legal", "amo", "odeio", "muito", "pouco", "maratona", "maratonando", "assistir", "assistindo", "vsf", "lol", "mds", "foda", "merda", "tnc", "site", "aplicativo", "player", "lixo", "pqp", "app", "curtindo", "curti", "otimo", "maravilhoso", "maravilhosa", "horrivel", "bosta", "coco", "melhor","pior", "adoro", "caro", "cara","barato"]
         # Define the common filters
         self.common_filters = "-filter:links -filter:replies"
         # Define the period (since:2023-08-01)
-        self.period = "since:2023-08-01"
+        self.period = f"since:{datetime.now().date()}"
         # Define the language (lang:pt)
         self.language = "lang:pt"
         
@@ -59,11 +59,12 @@ class TwitterCrawler:
             # Add the query to the advances queries list
             self.advanced_queries[platform] = search_query
 
-    def login_twitter(self):
+    def login_twitter(self, platform):
+        platform_dash_name = platform.upper().replace(' ', '_')
         try:
-            self.insert_text(self.login, '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[5]/label/div/div[2]/div/input' )
-            self.insert_text(self.username, '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input')
-            self.insert_text(self.password, '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[3]/div/label/div/div[2]/div[1]/input',40)
+            self.insert_text(os.getenv(f'TWITTER_LOGIN_{platform_dash_name}'), '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[5]/label/div/div[2]/div/input' )
+            self.insert_text(os.getenv(f'TWITTER_USERNAME_{platform_dash_name}'), '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input')
+            self.insert_text(os.getenv('TWITTER_PASS'), '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[3]/div/label/div/div[2]/div[1]/input',40)
         except Exception as e:
             print("An unexpected error occurred:", e)
 
@@ -91,7 +92,7 @@ class TwitterCrawler:
         except Exception as e:
             print("An unexpected error occurred:", e)
         
-    def scroll_down(self, platform, target_tweets_count = 400, scroll_pause_time = 1.5):
+    def scroll_down(self, platform, target_tweets_count = 400, scroll_pause_time = 3):
         # Waits until the first tweet appears
         self.wait_for_element('div[data-testid="cellInnerDiv"]', By.CSS_SELECTOR)
         # Count the number of tweets on the page
@@ -132,18 +133,21 @@ class TwitterCrawler:
     def main(self):
         # Create advanced searches
         self.create_advanced_search()
-        # Open the browser
-        self.driver.get('https://twitter.com/explore')
-        # Login on Twitter account
-        self.login_twitter()
         # Make the queries for each platform
         for platform, query in self.advanced_queries.items():
+            # Start the brower
+            self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.options) 
+            # Open the link on browser
+            self.driver.get('https://twitter.com/explore')
+            # Login on Twitter account
+            self.login_twitter(platform)
+            # Make the advanced search
             self.make_search(platform, query)
             print(f"{platform} concluído com sucesso!")
+            # Shut down the driver
+            self.driver.quit()
         # Export json files with html content
         self.export_html_pages()
-        # Shut down the driver
-        self.driver.quit()
 
 
 if __name__ == "__main__":
