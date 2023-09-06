@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -21,7 +22,7 @@ class DataManagement:
         # Import a list with the main streaming platforms
         # with open('streaming_platforms.json', 'r') as json_file:
         #     self.streaming_platforms = json.load(json_file)
-        self.streaming_platforms = ["Disney Plus"]
+        self.streaming_platforms = ["Disney Plus", "Netflix"]
 
 
         # Database connection parameters
@@ -36,6 +37,7 @@ class DataManagement:
         try:
             with open(file_path, 'r', encoding='utf-8') as json_file:
                 html_list = json.load(json_file)
+                print(f"The {platform} json file was imported successfully!")
             return html_list
         except FileNotFoundError:
             print(f"The file '{file_path}' does not exist.")
@@ -70,16 +72,46 @@ class DataManagement:
                 })
         # Add the tweets objects of the platform analyzed to the tweets_list
         self.tweets_list.extend(extracted_tweets)
+        print(f"{platform} data extracted successfully!")
     
     def store_data(self):
         # Create a dataframe and drop the duplicates
         df = pd.DataFrame(self.tweets_list).drop_duplicates()
-        print(df)
+
+        # try:
+        # Compare the new data with the stored data to avoid duplicates
+        df = self.delta_processing(df)
         
         # Insert the dataframe data in the database
         df.to_sql('tweets', self.engine, if_exists='append', index=False, schema='streamings')
 
         print("New tweets were added!")
+
+        # except Exception as e:
+        #     print(f"An error occurred: {str(e)}")
+
+    def delta_processing(self, df):
+        # Calculate the date two days ago from today
+        two_days_ago = datetime.now() - timedelta(days=2)
+
+        # Format the date in the 'YYYY-MM-DD' format
+        formatted_date = two_days_ago.strftime('%Y-%m-%d')
+
+        # Build the query to retrieve data from two days ago until today
+        query = f"""
+            SELECT "TEXT" FROM streamings.tweets
+            WHERE "DATE" >= '{formatted_date}'
+        """
+
+        # Query the database to retrieve the data
+        existing_records = pd.read_sql_query(query, self.engine)
+
+        # Create a new DataFrame containing only non-duplicate rows
+        df_filtered = df[~df['TEXT'].isin(existing_records['TEXT'])]
+        print("Delta processing concluded!")
+
+        return df_filtered
+
     
     def get_username(self, article):
         username_div = article.find('div', class_='css-901oao css-1hf3ou5 r-14j79pv r-18u37iz r-37j5jr r-1wvb978 r-a023e6 r-16dba41 r-rjixqe r-bcqeeo r-qvutc0')
@@ -108,14 +140,3 @@ class DataManagement:
 if __name__ == "__main__":
     factory = DataManagement()
     factory.main()
-
-        
-
-
-# divs_with_tweet_text = soup.find_all('div', attrs={'data-testid': 'tweetText'})
-
-
-
-# style="transform: translateY(39183px); position: absolute; width: 100%; transition: opacity 0.3s ease-out 0s;"
-# data-testid="tweet"
-# data-testid="tweetText"
