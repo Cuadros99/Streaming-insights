@@ -60,7 +60,7 @@
 
 ## **Uso**
 
-Este sistema coleta automaticamente tweets em tempo real relacionados aos serviços de streaming especificados no arquivo **`streaming_platforms.json`**. Os tweets são coletados, limpos e armazenados no banco de dados PostgreSQL.
+Este sistema coleta automaticamente tweets em tempo real relacionados aos serviços de streaming especificados no arquivo **`etls/streaming_platforms.json`**. Os tweets são coletados, limpos e armazenados no banco de dados PostgreSQL.
 
 ## Banco de Dados
 
