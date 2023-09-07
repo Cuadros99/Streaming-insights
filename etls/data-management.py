@@ -12,18 +12,19 @@ load_dotenv()
 
 class DataManagement:
     def __init__(self):
-        # Define the path of the directory with the html files
-        self.dir_path = 'twitter_html'
+
+        # Create a relative path to the etls directory
+        self.ETLS_DIR = os.path.dirname(__file__)
+
         # Define the html list of pages
         self.html_source_dict = {}
         # Define a list of tweets objects
         self.tweets_list = []
         
         # Import a list with the main streaming platforms
-        # with open('streaming_platforms.json', 'r') as json_file:
-        #     self.streaming_platforms = json.load(json_file)
-        self.streaming_platforms = ["Disney Plus", "Netflix"]
-
+        file_path = os.path.join(self.ETLS_DIR ,'streaming_platforms.json')
+        with open(file_path, 'r') as json_file:
+            self.streaming_platforms = json.load(json_file)
 
         # Database connection parameters
         connection_string = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:5432/{os.getenv('DB_DATABASE')}"
@@ -33,7 +34,7 @@ class DataManagement:
     
     def get_html_pages(self, platform):
         # Create the file_path adding the name of the streaming platform
-        file_path = os.path.join(self.dir_path,f"twitter_html_{platform.replace(' ','_')}.json")
+        file_path = os.path.join(self.ETLS_DIR, '../twitter_html',f"twitter_html_{platform.replace(' ','_')}.json")
         try:
             with open(file_path, 'r', encoding='utf-8') as json_file:
                 html_list = json.load(json_file)

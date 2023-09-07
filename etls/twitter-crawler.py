@@ -12,25 +12,24 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from the parent directory's .env file
+load_dotenv('/../.env')
+
 
 class TwitterCrawler:
     def __init__(self):
 
+        # Create a relative path to the etls directory
+        self.ETLS_DIR = os.path.dirname(__file__)
+
         # Define Selenium paramaters
         self.options = Options()
         self.options.add_argument('--disable-dev-shm-usage')
-        
-        # Get the twitter account data for auth 
-        self.login = os.getenv('TWITTER_LOGIN')
-        self.username = os.getenv('TWITTER_USERNAME')
-        self.password = os.getenv('TWITTER_PASS')
 
         # Import a list with the main streaming platforms
-        # with open('streaming_platforms.json', 'r') as json_file:
-        #     self.streaming_platforms = json.load(json_file)
-        self.streaming_platforms = ["Disney Plus", "Netflix"]
+        file_path = os.path.join(self.ETLS_DIR ,'streaming_platforms.json')
+        with open(file_path, 'r') as json_file:
+            self.streaming_platforms = json.load(json_file)
 
         # Keywords
         self.keywords = ["bom", "ruim", "chato", "legal", "amo", "odeio", "muito", "pouco", "maratona", "maratonando", "assistir", "assistindo", "vsf", "lol", "mds", "foda", "merda", "tnc", "site", "aplicativo", "player", "lixo", "pqp", "app", "curtindo", "curti", "otimo", "maravilhoso", "maravilhosa", "horrivel", "bosta", "coco", "melhor","pior", "adoro", "caro", "cara","barato"]
@@ -126,7 +125,8 @@ class TwitterCrawler:
     def export_html_pages(self):
         for platform in self.streaming_platforms:
             platform_name = platform.replace(' ', '_')
-            file_path = os.path.join('twitter_html', f'twitter_html_{platform_name}.json')
+            
+            file_path = os.path.join(self.ETLS_DIR ,'../twitter_html', f'twitter_html_{platform_name}.json')
             with open(file_path, 'w') as json_file:
                 json.dump(self.html_source_dict[platform], json_file)
 

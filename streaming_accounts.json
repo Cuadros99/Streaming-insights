@@ -1,9 +1,0 @@
-{
-    "disney_plus": ["@DisneyPlusBR", "@DisneyPlusHS", "@DisneyPlusUK", "@disneyplusHSTam", "@DisneyPlusSG", "@DisneyPlusMY", "@disneyplusph", "@DisneyPlusCA", "@DisneyPlusHelp", "@DisneyPlusJP", "@DisneyPlusFR", "@DisneyPlusBE", "@DisneyPlusKR", "@DisneyPlusITA", "@DisneyPlusTR", "@DisneyPlusES"],
-    "netflix": ["@netflix", "@NetflixBrasil", "@NetflixFR", "@NetflixLAT", "@NetflixIndia", "@NetflixMY", "@NetflixID", "@NetflixNaija", "@NetflixUK", "@Netflix_CA", "@Netflix_PH"],
-    "hbo_max": ["@hbomax", "@HBOMaxBR", "@HBOMaxLAP,R", "@HBOMaxBR", "@HBOMaxBR", "@HBOMaxBR"],
-    "prime_video": ["@PrimeVideo", "@PrimeVideoBR", "@primevideospo,rt", "@PrimeVideoIN", "@PrimeVideoIT", "@PrimeVideoDE", "@PrimeVideoCA", "@PrimeVideo_JP", "@primevideonai,ja", "@primevideoid", "@primevideouk", "@primevideoph", "@primevideosg", "@primevideomy"],
-    "apple_tv": ["@AppleTV"],
-    "paramount": ["@paramountplus", "@paramountplusBR", "@ParamountPlusUK", "@ParamountPlusAU", "@ParamountPlusFR", "@ParamountPlusIT", "@ParamountPlusMX", "@ParamountPlusLA", "@ParamountPlusCA"],
-    "globo_play": ["@globoplay"]
-}
