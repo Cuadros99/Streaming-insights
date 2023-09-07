@@ -69,16 +69,19 @@ class TwitterCrawler:
         except Exception as e:
             print("An unexpected error occurred:", e)
 
+    # Insert text in an html element and then press RETURN
     def insert_text(self, text, XPATH, timeout = 30):
         input_text = self.wait_for_element(XPATH, timeout=timeout)
         if input_text:
             input_text.send_keys(text)
             input_text.send_keys(Keys.RETURN)
 
+    # Wait for an element to appear on the screen and then select it 
     def wait_for_element(self, locator, by_type = By.XPATH, timeout=30):
         element = WebDriverWait(self.driver, timeout).until( EC.presence_of_element_located((by_type,locator)))
         return element
 
+    # Make a advanced search in the twitter search tab 
     def make_search(self, platform, adv_search):
         try:
             # Enter in the Explore Tab
@@ -93,6 +96,9 @@ class TwitterCrawler:
         except Exception as e:
             print("An unexpected error occurred:", e)
         
+    # Scroll  down the screen to load more tweets
+    # It stops when the tweets that fit on the filters are over or when the number of tweets
+    #   reach the limit defined in self.target_tweets_count
     def scroll_down(self, platform, scroll_pause_time = 3):
         # Waits until the first tweet appears
         self.wait_for_element('div[data-testid="cellInnerDiv"]', By.CSS_SELECTOR)
@@ -120,10 +126,12 @@ class TwitterCrawler:
                 break
             last_height = new_height
     
+    # Get the html page
     def get_html(self, platform):
         html = self.driver.page_source
         self.html_source_dict[platform].append(html)
-        
+    
+    # Export the html pages to jsons files
     def export_html_pages(self):
         for platform in self.streaming_platforms:
             platform_name = platform.replace(' ', '_')
