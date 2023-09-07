@@ -35,10 +35,12 @@ class TwitterCrawler:
         self.keywords = ["bom", "ruim", "chato", "legal", "amo", "odeio", "muito", "pouco", "maratona", "maratonando", "assistir", "assistindo", "vsf", "lol", "mds", "foda", "merda", "tnc", "site", "aplicativo", "player", "lixo", "pqp", "app", "curtindo", "curti", "otimo", "maravilhoso", "maravilhosa", "horrivel", "bosta", "coco", "melhor","pior", "adoro", "caro", "cara","barato"]
         # Define the common filters
         self.common_filters = "-filter:links -filter:replies"
-        # Define the period (since:2023-08-01)
+        # Define the period
         self.period = f"since:{datetime.now().date()}"
         # Define the language (lang:pt)
         self.language = "lang:pt"
+        # Define the limit number of tweets per Platforms
+        self.target_tweets_count = 400
         
         # Define the html list of pages
         self.html_source_dict = {}
@@ -91,7 +93,7 @@ class TwitterCrawler:
         except Exception as e:
             print("An unexpected error occurred:", e)
         
-    def scroll_down(self, platform, target_tweets_count = 400, scroll_pause_time = 3):
+    def scroll_down(self, platform, scroll_pause_time = 3):
         # Waits until the first tweet appears
         self.wait_for_element('div[data-testid="cellInnerDiv"]', By.CSS_SELECTOR)
         # Count the number of tweets on the page
@@ -100,7 +102,7 @@ class TwitterCrawler:
         last_height = self.driver.execute_script("return document.body.scrollHeight")
 
         # Scroll down through the screen
-        while tweets_count < target_tweets_count:
+        while tweets_count < self.target_tweets_count:
             # Get the html page
             self.get_html(platform)
             # Scroll down to bottom
@@ -129,6 +131,7 @@ class TwitterCrawler:
             file_path = os.path.join(self.ETLS_DIR ,'../twitter_html', f'twitter_html_{platform_name}.json')
             with open(file_path, 'w') as json_file:
                 json.dump(self.html_source_dict[platform], json_file)
+        print("Páginas html exportadas com sucesso!")
 
     def main(self):
         # Create advanced searches
