@@ -66,10 +66,10 @@ class DataManagement:
                 
                 # Add to tweets a tweet object
                 extracted_tweets.append({
-                    "TEXT": tweet_text, 
-                    "AUTHOR": username,
-                    "DATE": timestamp,
-                    "PLATFORM": platform
+                    "text": tweet_text, 
+                    "author": username,
+                    "created_at": timestamp,
+                    "platform": platform
                 })
         # Add the tweets objects of the platform analyzed to the tweets_list
         self.tweets_list.extend(extracted_tweets)
@@ -100,15 +100,15 @@ class DataManagement:
 
         # Build the query to retrieve data from two days ago until today
         query = f"""
-            SELECT "TEXT" FROM streamings.tweets
-            WHERE "DATE" >= '{formatted_date}'
+            SELECT "text" FROM streamings.tweets
+            WHERE "created_at" >= '{formatted_date}'
         """
 
         # Query the database to retrieve the data
         existing_records = pd.read_sql_query(query, self.engine)
 
         # Create a new DataFrame containing only non-duplicate rows
-        df_filtered = df[~df['TEXT'].isin(existing_records['TEXT'])]
+        df_filtered = df[~df['text'].isin(existing_records['text'])]
         print("Delta processing concluded!")
 
         return df_filtered
